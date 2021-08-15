@@ -2,7 +2,7 @@ package com.example.notificationservice.entity;
 
 public enum ChannelType {
 
-    slack, email;
+    slack, email, sms;
 
     @Override
     public String toString() {

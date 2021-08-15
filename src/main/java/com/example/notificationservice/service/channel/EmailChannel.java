@@ -22,16 +22,20 @@ public class EmailChannel implements IChannel {
     @Autowired
     it.ozimov.springboot.mail.service.EmailService emailService;
 
-    @Value("${spring.mail.username}") String fromEmail;
+    @Value("${spring.mail.username}")
+    String fromEmail;
 
     @Override
     public void notify(Message msg) {
-        if(!emailValidator.isValid(msg.getFrom())) {
+
+        if (!emailValidator.isValid(msg.getFrom())) {
             throw new RuntimeException("Invalid email format in - from address");
         }
-        if(!emailValidator.isValid(msg.getTo())) {
+
+        if (!emailValidator.isValid(msg.getTo())) {
             throw new RuntimeException("Invalid email format in - to address");
         }
+
         try {
             Email email = DefaultEmail.builder()
                     .from(new InternetAddress(fromEmail, "NotificationService"))
@@ -40,10 +44,11 @@ public class EmailChannel implements IChannel {
                     .subject(msg.getSubject())
                     .body(msg.getBody())
                     .encoding("UTF-8").build();
+
             emailService.send(email);
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to send message using email channel, exception : "+e.getMessage(), e);
+            throw new RuntimeException("Failed to send message using email channel, exception : " + e.getMessage(), e);
         }
     }
 

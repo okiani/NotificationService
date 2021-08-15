@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -12,11 +13,20 @@ import java.time.LocalDateTime;
 public class Message {
 
     private long id;
+
+    //email
     private String subject;
     private String from;
     private String to;
     private String body;
     private String sentTime;
+
+    // sms
+    private String mobile;
+    private String text;
+    private Double balance;
+    private Double withdraw;
+    private Timestamp currentDate;
 
     public Message() {
         this.sentTime = LocalDateTime.now().toString();
