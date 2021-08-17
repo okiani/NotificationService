@@ -2,11 +2,11 @@ package com.example.notificationservice.service;
 
 
 import com.example.notificationservice.entity.ChannelType;
-import com.example.notificationservice.entity.Message;
+import com.example.notificationservice.entity.MessageEntity;
 
 public interface INotificationService {
 
-    long notifyAll(Message message);
+    String notifyAll(MessageEntity message);
 
-    String notify(ChannelType channelType, Message message);
+    String notify(ChannelType channelType, MessageEntity message);
 }

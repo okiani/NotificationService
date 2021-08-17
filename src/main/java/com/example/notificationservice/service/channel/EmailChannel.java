@@ -1,7 +1,8 @@
 package com.example.notificationservice.service.channel;
 
 import com.example.notificationservice.entity.ChannelType;
-import com.example.notificationservice.entity.Message;
+import com.example.notificationservice.entity.MessageEntity;
+import com.example.notificationservice.exception.NotFoundException;
 import com.example.notificationservice.service.IChannel;
 import com.example.notificationservice.util.EmailValidator;
 import com.google.common.collect.Lists;
@@ -26,14 +27,14 @@ public class EmailChannel implements IChannel {
     String fromEmail;
 
     @Override
-    public void notify(Message msg) {
+    public void notify(MessageEntity msg) {
 
         if (!emailValidator.isValid(msg.getFrom())) {
-            throw new RuntimeException("Invalid email format in - from address");
+            throw new NotFoundException("Invalid email format in - " + msg.getFrom(), 404);
         }
 
         if (!emailValidator.isValid(msg.getTo())) {
-            throw new RuntimeException("Invalid email format in - to address");
+            throw new NotFoundException("Invalid email format in - " + msg.getTo(), 404);
         }
 
         try {
@@ -48,7 +49,7 @@ public class EmailChannel implements IChannel {
             emailService.send(email);
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to send message using email channel, exception : " + e.getMessage(), e);
+            throw new NotFoundException("Failed to send message using email channel, exception : " + e.getMessage(), 500);
         }
     }
 

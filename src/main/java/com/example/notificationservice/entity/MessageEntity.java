@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Setter
 @Getter
-public class Message {
+public class MessageEntity {
 
     private long id;
+    private String channelType;
 
     //email
     private String subject;
@@ -24,11 +25,11 @@ public class Message {
     // sms
     private String mobile;
     private String text;
-    private Double balance;
+    /*private Double balance;
     private Double withdraw;
-    private Timestamp currentDate;
+    private Timestamp currentDate;*/
 
-    public Message() {
+    public MessageEntity() {
         this.sentTime = LocalDateTime.now().toString();
     }
 

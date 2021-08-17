@@ -1,7 +1,8 @@
 package com.example.notificationservice.service.channel;
 
 import com.example.notificationservice.entity.ChannelType;
-import com.example.notificationservice.entity.Message;
+import com.example.notificationservice.entity.MessageEntity;
+import com.example.notificationservice.exception.NotFoundException;
 import com.example.notificationservice.service.IChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,10 +24,10 @@ public class ChannelFactory {
                 .stream()
                 .filter(service -> service.supports(c))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("No channel found with type : "+c));
+                .orElseThrow(() -> new NotFoundException("No channel found with type : " + c, 404));
     }
 
-    public void notifyAll(Message msg) {
+    public void notifyAll(MessageEntity msg) {
         for(IChannel c : channelList) {
             c.notify(msg);
         }

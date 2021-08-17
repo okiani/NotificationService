@@ -1,14 +1,14 @@
 package com.example.notificationservice.service.Impl;
 
 import com.example.notificationservice.entity.ChannelType;
-import com.example.notificationservice.entity.Message;
-import com.example.notificationservice.exception.BadRequest;
+import com.example.notificationservice.entity.MessageEntity;
 import com.example.notificationservice.service.channel.ChannelFactory;
 import com.example.notificationservice.service.IChannel;
 import com.example.notificationservice.service.INotificationService;
 import com.example.notificationservice.util.EmailValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,41 +25,35 @@ public class NotificationServiceImpl implements INotificationService {
     @Autowired
     EmailValidator emailValidator;
 
-    public NotificationServiceImpl(ChannelFactory factory, EmailValidator emailValidator) {
+    @Autowired
+    private ModelMapper modelMapper;
+
+    public NotificationServiceImpl(ChannelFactory factory, EmailValidator emailValidator, ModelMapper modelMapper) {
         this.factory = factory;
         this.emailValidator = emailValidator;
+        this.modelMapper = modelMapper;
     }
 
     private AtomicInteger notificationId = new AtomicInteger(1);
 
-    public long notifyAll(Message msg) {
+    public String notifyAll(MessageEntity msg) {
         for (IChannel c : factory.getChannels()) {
             msg.setId(notificationId.getAndIncrement());
             c.notify(msg);
-            LOG.debug("ID = " + notificationId + ", Message sent = " + msg);
         }
-        return notificationId.longValue();
+        return factory.getChannels() + " sent successfully";
     }
 
-    public String notify(ChannelType channelType, Message msg) {
-
+    public String notify(ChannelType channelType, MessageEntity msg) {
         msg.setId(notificationId.getAndIncrement());
         factory.get(channelType).notify(msg);
 
-        LOG.debug("ID = " + notificationId + ", Message sent = " + msg);
+        ChannelType channelTypeEnum = modelMapper.map(msg.getChannelType(), ChannelType.class);
 
-        if (channelType == ChannelType.email) {
+        if (channelTypeEnum.equals(ChannelType.email)) {
+            return channelType + " sent successfully to: " + msg.getTo();
 
-            /*if (!emailValidator.isValid(msg.getFrom())) {
-                throw new BadRequest("From Address", msg.getFrom());
-            }
-            if (!emailValidator.isValid(msg.getTo())) {
-                throw new BadRequest("To Address", msg.getFrom());
-            }*/
-
-            return channelType + " sent successfully to: " + msg.getFrom();
-
-        } else if (channelType == ChannelType.sms) {
+        } else if (channelTypeEnum.equals(ChannelType.sms)) {
             return channelType + " sent successfully to: " + msg.getMobile();
         }
 

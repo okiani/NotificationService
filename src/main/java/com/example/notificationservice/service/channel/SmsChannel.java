@@ -1,7 +1,8 @@
 package com.example.notificationservice.service.channel;
 
 import com.example.notificationservice.entity.ChannelType;
-import com.example.notificationservice.entity.Message;
+import com.example.notificationservice.entity.MessageEntity;
+import com.example.notificationservice.exception.NotFoundException;
 import com.example.notificationservice.service.IChannel;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.MessageCreator;
@@ -22,7 +23,7 @@ public class SmsChannel implements IChannel {
     @Value("${twilio.from_number}")
     private String twilloSenderNumber;
 
-    public void notify(Message msg) {
+    public void notify(MessageEntity msg) {
         try {
             Twilio.init(accountSID, accountAuthToken);
 
@@ -36,9 +37,8 @@ public class SmsChannel implements IChannel {
             creator.create();
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to send message using sms channel, exception : " + e.getMessage(), e);
+            throw new NotFoundException("Failed to send message using sms channel, exception : " + e.getMessage(), 500);
         }
-
     }
 
     @Override
